@@ -11,6 +11,12 @@ public static class Define
 
     public enum UIEvent
     {
+        None,
         Click,
+    }
+
+    public enum ObjectType
+    { 
+        None,
     }
 }
