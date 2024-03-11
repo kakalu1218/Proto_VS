@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class PlayerController : BaseController
 {
-    private Vector2 _moveDir = Vector2.zero;
-    private float _speed = 4.0f;
-
     [SerializeField] private Transform _indicator;
+
+    private Vector2 _moveDir = Vector2.zero;
 
     public override bool Init()
     {
@@ -15,7 +14,9 @@ public class PlayerController : BaseController
         { 
             return false;
         }
-        
+
+        ObjectType = Define.ObjectType.Player;
+
         return true;
     }
 

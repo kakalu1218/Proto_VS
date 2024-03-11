@@ -18,5 +18,15 @@ public static class Define
     public enum ObjectType
     { 
         None,
+        Player,
+        Monster,
+    }
+
+    public enum MonsterState
+    {
+        None,
+        Idle,
+        Moving,
+        Dead,
     }
 }
