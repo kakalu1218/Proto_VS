@@ -75,15 +75,15 @@ public class PoolManager
     }
     #endregion
 
-    private Dictionary<string, Pool> m_pool = new Dictionary<string, Pool>();
-    private Transform m_root = null;
+    private Dictionary<string, Pool> _pool = new Dictionary<string, Pool>();
+    private Transform _root = null;
 
     public void Init()
     {
-        if (m_root == null)
+        if (_root == null)
         {
-            m_root = new GameObject { name = "@Pool_Root" }.transform;
-            Object.DontDestroyOnLoad(m_root);
+            _root = new GameObject { name = "@Pool_Root" }.transform;
+            Object.DontDestroyOnLoad(_root);
         }
     }
 
@@ -91,50 +91,50 @@ public class PoolManager
     {
         Pool pool = new Pool();
         pool.Init(original, count);
-        pool.Root.parent = m_root;
+        pool.Root.parent = _root;
 
-        m_pool.Add(original.name, pool);
+        _pool.Add(original.name, pool);
     }
 
     public void Push(Poolable poolable)
     {
         string name = poolable.gameObject.name;
-        if (m_pool.ContainsKey(name) == false)
+        if (_pool.ContainsKey(name) == false)
         {
             Object.Destroy(poolable.gameObject);
             return;
         }
 
-        m_pool[name].Push(poolable);
+        _pool[name].Push(poolable);
     }
 
     public Poolable Pop(GameObject original, Transform parent = null)
     {
-        if (m_pool.ContainsKey(original.name) == false)
+        if (_pool.ContainsKey(original.name) == false)
         {
             CreatePool(original);
         }
 
-        return m_pool[original.name].Pop(parent);
+        return _pool[original.name].Pop(parent);
     }
 
     public GameObject GetOriginal(string name)
     {
-        if (m_pool.ContainsKey(name) == false)
+        if (_pool.ContainsKey(name) == false)
         {
             return null;
         }
 
-        return m_pool[name].Original;
+        return _pool[name].Original;
     }
 
     public void Clear()
     {
-        foreach (Transform child in m_root)
+        foreach (Transform child in _root)
         {
             Object.Destroy(child.gameObject);
         }
 
-        m_pool.Clear();
+        _pool.Clear();
     }
 }

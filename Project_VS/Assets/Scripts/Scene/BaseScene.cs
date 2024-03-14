@@ -7,17 +7,26 @@ public abstract class BaseScene : MonoBehaviour
 {
     public Define.Scene SceneType { get; protected set; } = Define.Scene.None;
 
-    void Awake()
+    private void Awake()
     {
-        Init();
+        Managers.Resource.LoadAllAsync<Object>("PreLoad", (key, count, totalCount) =>
+        {
+            Debug.Log($"{key} Load ¿Ï·á. {totalCount}/{count}");
+
+            if (count == totalCount)
+            {
+                Init();
+            }
+        });
     }
 
     protected virtual void Init()
     {
-        Object obj = GameObject.FindObjectOfType(typeof(EventSystem));
-        if (obj == null)
+        Object eventSystem = GameObject.FindObjectOfType(typeof(EventSystem));
+        if (eventSystem == null)
         {
-            Managers.Resource.Instantiate("UI/EventSystem").name = "@EventSystem";
+            eventSystem = Managers.Resource.Instantiate("EventSystem.prefab");
+            DontDestroyOnLoad(eventSystem);
         }
     }
 

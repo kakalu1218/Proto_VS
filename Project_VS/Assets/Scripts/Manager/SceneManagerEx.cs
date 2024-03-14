@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class SceneManagerEx
 {
-    public BaseScene CurrentScene { get { return Object.FindObjectOfType<BaseScene>(); } }
+    public BaseScene CurrentScene { get { return UnityEngine.Object.FindObjectOfType<BaseScene>(); } }
 
     public void LoadScene(Define.Scene type, bool isAsync = true)
     {
@@ -23,7 +24,7 @@ public class SceneManagerEx
 
     private string GetSceneName(Define.Scene type)
     {
-        string name = System.Enum.GetName(typeof(Define.Scene), type);
+        string name = Enum.GetName(typeof(Define.Scene), type);
         return name;
     }
 }

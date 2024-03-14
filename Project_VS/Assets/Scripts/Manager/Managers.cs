@@ -14,7 +14,6 @@ public class Managers : MonoBehaviour
         }
     }
 
-    // Core
     private DataManager _data = new DataManager();
     private EventManager _event = new EventManager();
     private ObjectManager _object = new ObjectManager();
@@ -55,7 +54,6 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             s_instance = gameObject.GetComponent<Managers>();
 
-            // Core Manager Init
             s_instance._data.Init();
             s_instance._pool.Init();
             s_instance._event.Init();

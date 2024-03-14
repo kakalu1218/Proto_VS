@@ -1,26 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Define;
 
-public class MonsterController : BaseController
+public class MonsterController : PawnController
 {
+    [Tooltip("팅김 강도")]
+    [SerializeField] private float _pushForce;
+
     private Define.MonsterState _monsterState = Define.MonsterState.None;
     protected Define.MonsterState MonsterState
     {
         get { return _monsterState; }
         set
-        { 
+        {
             _monsterState = value;
-            // TODO : Update Animation
+
+            // TODO : Update Animation.
         }
     }
 
     public override bool Init()
     {
         if (base.Init() == false)
-        { 
+        {
             return false;
         }
+
+        Physics.IgnoreLayerCollision(0, 4);
 
         ObjectType = Define.ObjectType.Monster;
         MonsterState = Define.MonsterState.Moving;
@@ -53,26 +61,37 @@ public class MonsterController : BaseController
         // TODO : 임시로 Tag 사용중 영락이 작업끝나면 ObjectManger로 관리하게.
         GameObject player = GameObject.FindWithTag("Player");
         if (player == null)
-        { 
+        {
             return;
         }
 
-        Vector3 moveDir = player.transform.position - transform.position;
-        Vector3 movement = transform.position + moveDir.normalized * _speed * Time.deltaTime;
-        GetComponent<Rigidbody2D>().MovePosition(movement);
+        Vector3 moveDir = (player.transform.position - transform.position).normalized;
+        Vector3 movement = moveDir * _speed * Time.deltaTime;
+        transform.position += movement;
     }
 
     private void UpdateDead()
     {
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    [SerializeField] private int _maxHitCount = 3;
+    private int _hitCount;
+
+    private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.tag != "Player")
+        if (collision.gameObject.tag != "Player")
         {
             return;
         }
 
-        // TODO : 데미지 처리
+        Vector2 pushDirection = (transform.position - collision.transform.position).normalized;
+        GetComponent<Rigidbody2D>().AddForce(pushDirection * _pushForce, ForceMode2D.Impulse);
+
+        // TODO : DamageHit.
+        _hitCount++;
+        if (_hitCount >= _maxHitCount)
+        {
+            Managers.Object.Despawn(this);
+        }
     }
 }

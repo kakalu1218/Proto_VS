@@ -1,73 +1,97 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 using UnityEngine;
-using static UnityEngine.UI.Image;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class ResourceManager
 {
-    public T Load<T>(string path) where T : Object
+    private Dictionary<string, UnityEngine.Object> _resources = new Dictionary<string, UnityEngine.Object>();
+
+    #region Addressable
+    public void LoadAsync<T>(string key, Action<T> callback = null) where T : UnityEngine.Object
+    {
+        // 캐시 확인.
+        if (_resources.TryGetValue(key, out UnityEngine.Object resource))
+        {
+            callback?.Invoke(resource as T);
+            return;
+        }
+
+        string loadKey = key;
+        if (key.Contains(".sprite"))
+        { 
+            loadKey = $"{key}[{key.Replace(".sprite", "")}]";
+        }
+
+        // 리소스 비동기 로딩 시작.
+        var asyncOperation = Addressables.LoadAssetAsync<T>(loadKey);
+        asyncOperation.Completed += (resourceOperation) =>
+        {
+            _resources.Add(key, resourceOperation.Result);
+            callback?.Invoke(resourceOperation.Result);
+        };
+    }
+
+    public void LoadAllAsync<T>(string label, Action<string, int, int> callback) where T : UnityEngine.Object
+    {
+        var operationHandle = Addressables.LoadResourceLocationsAsync(label, typeof(T));
+        operationHandle.Completed += (resourceOperation) =>
+        {
+            int loadCount = 0;
+            int totalCount = resourceOperation.Result.Count;
+
+            foreach (var result in resourceOperation.Result)
+            {
+                LoadAsync<T>(result.PrimaryKey, (obj) =>
+                {
+                    loadCount++;
+                    callback?.Invoke(result.PrimaryKey, loadCount, totalCount);
+                });
+            }
+        };
+    }
+    #endregion
+
+    public T Load<T>(string key) where T : UnityEngine.Object
     {
         if (typeof(T) == typeof(GameObject))
         {
-            string name = path;
-            int index = name.LastIndexOf('/');
-            if (index >= 0)
-            { 
-                name = name.Substring(index + 1);
-            }
-
-            GameObject gameObject = Managers.Pool.GetOriginal(name);
+            GameObject gameObject = Managers.Pool.GetOriginal(key);
             if (gameObject != null)
-            { 
+            {
                 return gameObject as T;
             }
         }
 
-        T resource = Resources.Load<T>(path);
-        if (resource == null)
-        {
-            Debug.LogError($"리소스를 로드하지 못했습니다. 경로: {path}");
-            return null;
+        if (_resources.TryGetValue(key, out UnityEngine.Object resource))
+        { 
+            return resource as T;
         }
 
-        return resource;
+        Debug.LogError($"{key}를 로드하지 못했습니다.");
+        return null;
     }
 
-    public GameObject Instantiate(GameObject prefab, Transform parent = null)
+    public GameObject Instantiate(string key, Transform parent = null)
     {
+        GameObject prefab = Load<GameObject>($"{key}");
         if (prefab == null)
         {
-            Debug.LogError($"Prefab을 로드하지 못했습니다. 경로 : {prefab.name} ");
+            Debug.LogError($"Prefab {key}을 로드하지 못했습니다.");
             return null;
         }
 
         if (prefab.GetComponent<Poolable>() != null)
-        {
+        { 
             return Managers.Pool.Pop(prefab, parent).gameObject;
         }
 
-        GameObject gameObject = Object.Instantiate(prefab, parent);
+        GameObject gameObject = UnityEngine.Object.Instantiate(prefab, parent);
         gameObject.name = prefab.name;
-        return gameObject;
-    }
-
-    public GameObject Instantiate(string path, Transform parent = null)
-    {
-        GameObject original = Load<GameObject>($"Prefabs/{path}");
-        if (original == null)
-        {
-            Debug.LogError($"Prefab을 로드하지 못했습니다. 경로 : {path} ");
-            return null;
-        }
-
-        if (original.GetComponent<Poolable>() != null)
-        { 
-            return Managers.Pool.Pop(original, parent).gameObject;
-        }
-
-        GameObject gameObject = Object.Instantiate(original, parent);
-        gameObject.name = original.name;
         return gameObject;
     }
 
@@ -75,7 +99,7 @@ public class ResourceManager
     {
         if (gameObject == null)
         { 
-            Debug.LogError($"삭제할 {gameObject} 가 없습니다.");
+            Debug.LogError($"삭제할 {gameObject.name} 가 없습니다.");
             return;
         }
 
@@ -86,6 +110,6 @@ public class ResourceManager
             return;
         }
 
-        Object.Destroy(gameObject);
+        UnityEngine.Object.Destroy(gameObject);
     }
 }

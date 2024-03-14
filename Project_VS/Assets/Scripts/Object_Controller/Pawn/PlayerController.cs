@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : BaseController
+public class PlayerController : PawnController
 {
     [SerializeField] private Transform _indicator;
 
@@ -35,6 +35,8 @@ public class PlayerController : BaseController
         {
             _indicator.eulerAngles = new Vector3(0, 0, Mathf.Atan2(-movement.x, movement.y) * 180 / Mathf.PI);
         }
+
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
     }
 
     private void InputKey()
