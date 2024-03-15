@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Define;
 
-public class MonsterController : PawnController
+public class MonsterController : PawnBaseController
 {
     [Tooltip("팅김 강도")]
     [SerializeField] private float _pushForce;
@@ -58,8 +58,7 @@ public class MonsterController : PawnController
 
     private void UpdateMoving()
     {
-        // TODO : 임시로 Tag 사용중 영락이 작업끝나면 ObjectManger로 관리하게.
-        GameObject player = GameObject.FindWithTag("Player");
+        GameObject player = Managers.Object.Player.gameObject;
         if (player == null)
         {
             return;
@@ -79,7 +78,7 @@ public class MonsterController : PawnController
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.tag != "Player")
+        if (collision.gameObject != Managers.Object.Player.gameObject)
         {
             return;
         }

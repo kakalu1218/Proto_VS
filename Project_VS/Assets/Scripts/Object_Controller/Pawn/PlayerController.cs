@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : PawnController
+public class PlayerController : PawnBaseController
 {
     [SerializeField] private Transform _indicator;
 

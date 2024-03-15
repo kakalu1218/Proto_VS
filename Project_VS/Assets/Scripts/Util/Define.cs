@@ -20,6 +20,7 @@ public static class Define
         None,
         Player,
         Monster,
+        Projectile,
     }
 
     public enum MonsterState
