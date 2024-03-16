@@ -10,11 +10,11 @@ public class ProjectileController : BaseController
     [Tooltip("발사체 지속 시간")]
     [SerializeField] private float _lifeTime = 10.0f;
 
-    private PawnBaseController _owner;
+    private BasePawnController _owner;
     private Vector3 _moveDir;
 
-    public void SetInfo(PawnBaseController owner, Vector3 moveDir)
-    { 
+    public void SetInfo(BasePawnController owner, Vector3 moveDir)
+    {
         _owner = owner;
         _moveDir = moveDir;
     }
@@ -26,19 +26,20 @@ public class ProjectileController : BaseController
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(_owner.gameObject == collision.gameObject)
+        if (_owner.gameObject == collision.gameObject ||
+            collision.gameObject.tag == "MainCamera")
         {
             return;
         }
 
-        Type type = _owner.GetType();
-        if (type == typeof(PlayerController))
+        Type ownerType = _owner.GetType();
+        if (ownerType == typeof(PlayerController))
         {
 
         }
-        else if (type == typeof(MonsterController))
-        { 
-        
+        else if (ownerType == typeof(MonsterController))
+        {
+
         }
 
         Managers.Object.Despawn(this);

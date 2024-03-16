@@ -7,6 +7,7 @@ public static class Define
     public enum Scene
     { 
         None,
+        Game,
     }
 
     public enum UIEvent
@@ -29,5 +30,10 @@ public static class Define
         Idle,
         Moving,
         Dead,
+    }
+
+    public enum SkillTpye
+    { 
+        None,
     }
 }

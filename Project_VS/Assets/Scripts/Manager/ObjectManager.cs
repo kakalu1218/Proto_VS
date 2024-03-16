@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ObjectManager
 {
     public PlayerController Player { get; private set; }
     public HashSet<MonsterController> Monsters { get; private set; } = new HashSet<MonsterController>();
+    public HashSet<ProjectileController> Projectiles { get; private set; } = new HashSet<ProjectileController>();
 
     public T Spawn<T>(Vector3 position) where T : BaseController
     {
@@ -30,6 +32,15 @@ public class ObjectManager
             Monsters.Add(monsterController);
             return monsterController as T;
         }
+        else if(type == typeof(ProjectileController))
+        {
+            GameObject gameObject = Managers.Resource.Instantiate("Bullet.prefab");
+            gameObject.transform.position = position;
+
+            ProjectileController projectileController = gameObject.GetComponent<ProjectileController>();
+            Projectiles.Add(projectileController);
+            return projectileController as T;
+        }
 
         return null;
     }
@@ -43,6 +54,11 @@ public class ObjectManager
         else if (type == typeof(MonsterController))
         {
             Monsters.Remove(obj as MonsterController);
+            Managers.Resource.Destroy(obj.gameObject);
+        }
+        else if (type == typeof(ProjectileController))
+        {
+            Projectiles.Remove(obj as ProjectileController);
             Managers.Resource.Destroy(obj.gameObject);
         }
     }

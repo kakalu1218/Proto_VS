@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Define;
 
-public class MonsterController : PawnBaseController
+public class MonsterController : BasePawnController
 {
     [Tooltip("ÆÃ±è °­µµ")]
     [SerializeField] private float _pushForce;

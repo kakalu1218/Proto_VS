@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : PawnBaseController
+public class PlayerController : BasePawnController
 {
     [SerializeField] private Transform _indicator;
 
@@ -16,6 +16,8 @@ public class PlayerController : PawnBaseController
         }
 
         ObjectType = Define.ObjectType.Player;
+
+        Managers.Skill.AddSkill<BulletSkill>(transform.position);
 
         return true;
     }
@@ -44,5 +46,11 @@ public class PlayerController : PawnBaseController
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
         _moveDir = new Vector2(horizontalInput, verticalInput).normalized;
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            ProjectileController pc = Managers.Object.Spawn<ProjectileController>(transform.position);
+            pc.SetInfo(this, _moveDir);
+        }
     }
 }
