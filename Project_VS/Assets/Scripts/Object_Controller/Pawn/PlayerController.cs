@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : BasePawnController
 {
     [SerializeField] private Transform _indicator;
+    public Transform Indicator { get { return _indicator; } }
 
     private Vector2 _moveDir = Vector2.zero;
 
@@ -17,7 +18,10 @@ public class PlayerController : BasePawnController
 
         ObjectType = Define.ObjectType.Player;
 
+        // TODO : юс╫ц
         Managers.Skill.AddSkill<BulletSkill>(transform.position);
+        Managers.Skill.AddSkill<SwordSkill>(transform.position);
+        Speed = 6.0f;
 
         return true;
     }
@@ -30,7 +34,7 @@ public class PlayerController : BasePawnController
 
     private void MovePlayer()
     {
-        Vector3 movement = _moveDir * _speed * Time.deltaTime;
+        Vector3 movement = _moveDir * Speed * Time.deltaTime;
         transform.position += movement;
 
         if (_moveDir != Vector2.zero)
@@ -46,11 +50,5 @@ public class PlayerController : BasePawnController
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
         _moveDir = new Vector2(horizontalInput, verticalInput).normalized;
-
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            ProjectileController pc = Managers.Object.Spawn<ProjectileController>(transform.position);
-            pc.SetInfo(this, _moveDir);
-        }
     }
 }

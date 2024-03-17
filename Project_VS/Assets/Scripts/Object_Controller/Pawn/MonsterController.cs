@@ -2,13 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Define;
 
 public class MonsterController : BasePawnController
 {
-    [Tooltip("팅김 강도")]
-    [SerializeField] private float _pushForce;
-
     private Define.MonsterState _monsterState = Define.MonsterState.None;
     protected Define.MonsterState MonsterState
     {
@@ -32,6 +28,10 @@ public class MonsterController : BasePawnController
 
         ObjectType = Define.ObjectType.Monster;
         MonsterState = Define.MonsterState.Moving;
+
+        // TODO : 임시
+        Hp = 3;
+        Speed = 4.0f;
 
         return true;
     }
@@ -65,7 +65,7 @@ public class MonsterController : BasePawnController
         }
 
         Vector3 moveDir = (player.transform.position - transform.position).normalized;
-        Vector3 movement = moveDir * _speed * Time.deltaTime;
+        Vector3 movement = moveDir * Speed * Time.deltaTime;
         transform.position += movement;
     }
 
@@ -73,24 +73,11 @@ public class MonsterController : BasePawnController
     {
     }
 
-    [SerializeField] private int _maxHitCount = 3;
-    private int _hitCount;
-
-    private void OnCollisionStay2D(Collision2D collision)
+    public override void OnDead()
     {
-        if (collision.gameObject != Managers.Object.Player.gameObject)
-        {
-            return;
-        }
+        Managers.Object.Despawn(this);
 
-        Vector2 pushDirection = (transform.position - collision.transform.position).normalized;
-        GetComponent<Rigidbody2D>().AddForce(pushDirection * _pushForce, ForceMode2D.Impulse);
-
-        // TODO : DamageHit.
-        _hitCount++;
-        if (_hitCount >= _maxHitCount)
-        {
-            Managers.Object.Despawn(this);
-        }
+        // TODO : 임시
+        Hp = 3;
     }
 }

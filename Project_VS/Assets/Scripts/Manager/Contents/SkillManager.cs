@@ -23,6 +23,18 @@ public class SkillManager
 
             return bulletSkill as T;
         }
+        else if (type == typeof(SwordSkill))
+        {
+            GameObject gameObject = Managers.Resource.Instantiate("SwordSkill.prefab");
+            gameObject.transform.position = position;
+
+            SwordSkill swordSkill = gameObject.GetComponent<SwordSkill>();
+            swordSkill.transform.SetParent(parent);
+            swordSkill.ActivateSkill();
+            Skills.Add(swordSkill);
+
+            return swordSkill as T;
+        }
 
         return null;
     }

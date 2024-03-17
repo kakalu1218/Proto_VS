@@ -9,7 +9,7 @@ public class PoolManager
     private class Pool
     {
         public GameObject Original { get; private set; } = null;
-        public Transform Root { get; set; } = null;
+        public Transform Root { get; private set; } = null;
 
         private Stack<Poolable> _poolStack = new Stack<Poolable>();
 

@@ -4,9 +4,8 @@ using UnityEngine;
 
 public abstract class BaseSkill : MonoBehaviour
 {
-    public BasePawnController Owner { get; protected set; }
-    public int Damage { get; protected set; } = 100;
-    public float CoolTime { get; protected set; } = 1.0f;
+    public int Damage { get; protected set; } = 1;
+    private float _coolTime = 1.0f;
 
     public void ActivateSkill()
     {
@@ -18,15 +17,15 @@ public abstract class BaseSkill : MonoBehaviour
         while (true)
         {
             DoSkillJob();
-            yield return new WaitForSeconds(CoolTime);
+            yield return new WaitForSeconds(_coolTime);
         }
     }
 
     protected abstract void DoSkillJob();
 
-    protected virtual void GenerateProjectile(BasePawnController owner, Vector3 startPos, Vector3 dir)
+    protected virtual void GenerateProjectile(BasePawnController owner, Vector3 startPos, Vector3 moveDir)
     {
         ProjectileController projectileController = Managers.Object.Spawn<ProjectileController>(startPos);
-        projectileController.SetInfo(owner, dir);
+        projectileController.SetInfo(owner, moveDir, Damage);
     }
 }
