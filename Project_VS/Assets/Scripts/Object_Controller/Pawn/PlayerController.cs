@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerController : BasePawnController
 {
     [SerializeField] private Transform _indicator;
     public Transform Indicator { get { return _indicator; } }
+
+    public float GemCollectDistance { get; private set; } = 1.0f;
 
     private Vector2 _moveDir = Vector2.zero;
 
@@ -30,6 +33,7 @@ public class PlayerController : BasePawnController
     {
         MovePlayer();
         InputKey();
+        CollectGem();
     }
 
     private void MovePlayer()
@@ -50,5 +54,23 @@ public class PlayerController : BasePawnController
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
         _moveDir = new Vector2(horizontalInput, verticalInput).normalized;
+    }
+
+    private void CollectGem()
+    {
+        float sqrCollectDist = GemCollectDistance * GemCollectDistance;
+
+        var findGems = Managers.Grid.GatherObjects(transform.position, GemCollectDistance);
+
+        foreach (var gameObject in findGems)
+        {
+            GemController gem = gameObject.GetComponent<GemController>();
+
+            Vector3 dir = gem.transform.position - transform.position;
+            if (dir.sqrMagnitude <= sqrCollectDist)
+            {
+                Managers.Object.Despawn(gem);
+            }
+        }
     }
 }

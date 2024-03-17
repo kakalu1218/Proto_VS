@@ -32,8 +32,10 @@ public class Managers : MonoBehaviour
     public static UIManager UI { get { return Instance._ui; } }
 
     // Contents
+    private GridManager _grid = new GridManager();
     private SkillManager _skill = new SkillManager();
 
+    public static GridManager Grid { get { return Instance._grid; } }
     public static SkillManager Skill { get { return Instance._skill; } }
 
     private void Start()

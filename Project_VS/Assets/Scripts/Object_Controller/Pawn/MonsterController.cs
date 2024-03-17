@@ -76,6 +76,7 @@ public class MonsterController : BasePawnController
     public override void OnDead()
     {
         Managers.Object.Despawn(this);
+        Managers.Object.Spawn<GemController>(transform.position);
 
         // TODO : юс╫ц
         Hp = 3;

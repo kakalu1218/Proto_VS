@@ -22,6 +22,7 @@ public static class Define
         Player,
         Monster,
         Projectile,
+        Gem,
     }
 
     public enum MonsterState

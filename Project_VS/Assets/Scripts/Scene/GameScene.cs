@@ -13,6 +13,7 @@ public class GameScene : BaseScene
     {
         base.Init();
 
+        Managers.Grid.SetGrid();
         Managers.Resource.Instantiate("Map.prefab");
         Managers.Object.Spawn<PlayerController>(Vector3.zero);
 

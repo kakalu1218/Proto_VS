@@ -16,8 +16,8 @@ public abstract class BasePawnController : BaseController
             return;
         }
 
-        Vector2 pushDirection = (transform.position - attacker.transform.position).normalized;
-        GetComponent<Rigidbody2D>().AddForce(pushDirection * _pushForce, ForceMode2D.Impulse);
+        Vector2 pushDir = (transform.position - attacker.transform.position).normalized;
+        GetComponent<Rigidbody2D>().AddForce(pushDir * _pushForce, ForceMode2D.Impulse);
 
         Hp -= damage;
 
